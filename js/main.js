@@ -127,8 +127,7 @@ function prestamoAutomotor(){
 });     
     alert("El total a pagar es: " + resultado + " " + moneda)
     
-    //Volvemos a llamar a la funcion para consulta de prestamos
-    //cargarPrestamos()
+    //Volvemos a llamar a la funcion para consulta de prestamos    
     
     cargarPrestamos()
  
@@ -167,8 +166,7 @@ function prestamoInmobiliario(){
 });     
     
     alert("El total a pagar es: " + resultado + " " + moneda)
-    //Volvemos a llamar a la funcion para consulta de prestamos    
-    //cargarPrestamos()
+    //Volvemos a llamar a la funcion para consulta de prestamos        
     cargarPrestamos()
 }
 
