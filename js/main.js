@@ -170,10 +170,25 @@ function prestamoInmobiliario(){
     cargarPrestamos()
 }
 
+const btnUsuario = document.querySelector('#user-btn')
+
+const pedirUsuario = () => {
+    usuario = prompt('Ingrese el nombre de usuario')
+    localStorage.setItem('usuario', usuario)
+}
+
+if (!usuario){
+    pedirUsuario()
+}
+
+titleUsuario.innerText = `Bienvenido ${usuario}`
+
+btnUsuario.addEventListener('click', () => {
+    pedirUsuario()
+    titleUsuario.innerText = `Bienvenido $(usuario)`
+})
+
 //Inicio del programa
 
 // Bienvenida();
 // cargarPrestamos();
-
-
-
