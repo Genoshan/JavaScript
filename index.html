@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
 
     <title>Document</title>
 </head>
@@ -13,50 +14,91 @@
     <div class="container">
         <div class="row">
           <div class="col-sm">
-            <h1>Bienvenidos a Honest Bank</h1>
+            <h1>Bienvenidos a Honest Bank</h1>            
             <h2>Simulador de Prestamos</h2>
+            
+            <h3 id="bienvenida">Bienvenido!</h3>
+
           </div>
         </div>
       </div>    
 
-      <div class="container">
+      
+
+      <!-- <div class="container">
         <div class="row">
           <div class="col-sm">
-            <form>
-                <!-- Email input -->
+            <form>               
                 <div class="form-outline mb-4">
-                  <input type="email" id="form2Example1" class="form-control" />
-                  <label class="form-label" for="form2Example1">Direccion de correo</label>
-                </div>
-              
-                <!-- Password input -->
+                  <input type="text" id="loginusuario" class="form-control" />
+                  <label class="form-label" for="loginusuario">Usuario</label>
+                </div>                             
                 <div class="form-outline mb-4">
-                  <input type="password" id="form2Example2" class="form-control" />
-                  <label class="form-label" for="form2Example2">Password</label>
-                </div>
-              
-                <!-- 2 column grid layout for inline styling -->
+                  <input type="password" id="loginpassword" class="form-control" />
+                  <label class="form-label" for="loginpassword">Password</label>
+                </div>                            
                 <div class="row mb-4">
                   <div class="col d-flex justify-content-center">
                   </div>
-                </div>
-              
-                <!-- Submit button -->                
-                <button id="user-btn" type="button" class="btn btn-outline-primary btn-block mb-4">Login</button>
-
-                
-              
-                <!-- Register buttons -->
+                </div>                             
+                <button id="user-btn" type="button" class="btn btn-outline-primary btn-block mb-4">Login</button>                                             
                 <div class="text-center">
                   <p>No eres miembro? <a href="#!">Registrarse</a></p>
                 </div>
               </form>
           </div>
         </div>
+      </div> -->
+
+      <div class="container">
+        <div class="row">
+          <div class="col-sm">
+            <form>
+              <div class="form-group">
+                <label for="formusuario">Ingrese su Nombre</label>
+                <!-- <h3>Ingrese su nombre</h3> -->
+                <input type="text" class="form-control" id="formusuario" placeholder="Nombre" required="true">
+              </div>
+              <div class="form-group">
+                <label for="formTipos">Tipos de Prestamos</label>
+                <select class="form-control" id="formTipos">
+                  <option>Automotor</option>
+                  <option>Inmobiliario</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="formMonedas">Monedas</label>
+                <select class="form-control" id="formMonedas">
+                  <option>Pesos</option>
+                  <option>Dolares</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="formMonto">Ingrese el monto</label>
+                <input type="text" class="form-control" id="formMonto" required="true">
+              </div>
+              <div class="form-group">
+                <label for="formCuotas">Ingrese la cantidad de cuotas</label>
+                <input type="number" class="form-control" id="formCuotas" required="true">
+              </div>
+              <button id="calcular-btn" type="button" class="btn btn-outline-success btn mb-4">Calcular Prestamo</button>                                             
+              <button id="listar-btn" type="button" class="btn btn-outline-primary btn mb-4">Listado Prestamos</button>
+            </form>
+          </div>
+        </div>
       </div>
+
+
+
+
+
+
+
+      
     
 
         
     <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
