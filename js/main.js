@@ -19,52 +19,7 @@ function Bienvenida() {
     alert("Bienvenid@ " + nombre + " al simulador de prestamos, a continuacion podra escojer los tipos de prestamo");
 }
 
-function cargarPrestamos() {
 
-    let tipo = prompt("Ingrese una opcion: \n 1: Simular Prestamo Automotor \n 2: Simular Prestamo Inmobiliario \n 3: Informe de Prestamos \n 4: Finalizar");
-
-    //creamos nueva instancia de prestamos con los valores obtenidos por el usuario
-
-    if (tipo === "1") {
-        tipo = "Automotor"
-    }
-    else if (tipo === "2") {
-        tipo = "Inmobiliario"
-    }
-    else if (tipo === "3") {
-        mostrarListadoPrestamos()
-    }
-    else if (tipo === "4") {
-        alert("Gracias por su Visita!");
-    }
-
-    if (tipo === "Automotor" || tipo === "Inmobiliario") {
-        let moneda = prompt("Ingrese la moneda para el prestamo \n 1: Dolares \n 2: Pesos")
-        let monto = prompt("Ingrese el monto")
-        let cantCuotas = prompt("Ingrese la cantidad de cuotas")
-
-        if (moneda === "1") {
-            moneda = "Dolares"
-        }
-        else if (moneda === "2") {
-            moneda = "Pesos"
-        }
-
-        const nuevoPrestamo = new Prestamos(tipo, moneda, monto, cantCuotas)
-        alert(" Eligio: \n" + " Prestamo: " + nuevoPrestamo.tipo + "\n Moneda: " + nuevoPrestamo.moneda + "\n Monto: " + nuevoPrestamo.monto + "\n Cantidad de Cuotas: " + nuevoPrestamo.cantCuotas);
-        arrayprestamos.push(nuevoPrestamo)
-
-        if (nuevoPrestamo.tipo === "Automotor") {
-            prestamoAutomotor()
-        }
-        else if (nuevoPrestamo.tipo === "Inmobiliario") {
-            prestamoInmobiliario()
-        }
-    }
-}
-
-
-//Con HTML
 function HTMLcargarPrestamos() {
     //Obtengo valores ingresados por el usuario
     let nombreusUario = document.getElementById('formusuario').value
@@ -72,6 +27,10 @@ function HTMLcargarPrestamos() {
     let moneda = document.getElementById('formMonedas').value
     let monto = document.getElementById('formMonto').value
     let cantCuotas = document.getElementById('formCuotas').value
+
+    //const nuevoPrestamo = new Prestamos(tipo, moneda, monto, cantCuotas)    
+
+    let montoendolares=0
 
     
 
@@ -86,21 +45,36 @@ function HTMLcargarPrestamos() {
 
     if (tipo === "Automotor" || tipo === "Inmobiliario") {
 
-        //let moneda = prompt("Ingrese la moneda para el prestamo \n 1: Dolares \n 2: Pesos")
-        //let monto = prompt("Ingrese el monto")
-        //let cantCuotas = prompt("Ingrese la cantidad de cuotas") 
-
         if (moneda === "0") {
-            moneda = "Dolares"
+            moneda = "Pesos" 
         }
         else if (moneda === "1") {
-            moneda = "Pesos"
+            moneda = "Dolares"
         }
 
         console.log(moneda)
+        if (moneda === "Dolares") {
+            //si la moneda es en dolares , traemos la cotizacion diaria
+            console.log("Elegi :" + document.getElementById('formMonedas').value) 
+            
+            
+            //CotizacionDiaria
+            obtengoCotizacion('USD','UYU')
+            .then(tasa => {
+              const nuevatasa = tasa;              
+              montoendolares = nuevatasa; 
+              console.log("Adentro del then vale: "+ montoendolares)
+              console.log("Total a pagar en Pesos :" + monto * montoendolares);
+              const nuevoPrestamo = new Prestamos(tipo, moneda, montoendolares, cantCuotas)
+            })
+            .catch(error => console.error(error));
+            
 
-        const nuevoPrestamo = new Prestamos(tipo, moneda, monto, cantCuotas)
-        //alert(" Eligio: \n" + " Prestamo: " + nuevoPrestamo.tipo + "\n Moneda: " + nuevoPrestamo.moneda + "\n Monto: " + nuevoPrestamo.monto + "\n Cantidad de Cuotas: " + nuevoPrestamo.cantCuotas);    
+        }
+        else {
+            console.log("Elegi la otra moneda")            
+        }
+        
         arrayprestamos.push(nuevoPrestamo)
         console.log(nuevoPrestamo)
         console.log(arrayprestamos)
@@ -119,7 +93,6 @@ function HTMLcargarPrestamos() {
 function mostrarListadoPrestamos() {
     let resultadoPesos = ""
     let resultadoDolares = ""
-    //let resultado = "Los prestamos solicitados son : \n"
 
     //Creo copia del array de objetos para poder filtrar por moneda
 
@@ -134,7 +107,17 @@ function mostrarListadoPrestamos() {
         resultadoDolares += "Tipo: " + prestamo.tipo + " - " + " " + "Monto: " + prestamo.monto + " - " + " " + "Cantidad de Cuotas: " + prestamo.cantCuotas
     });
 
+    if (usuario==undefined) {
+        Swal.fire({
+            title: `No Hay prestamos registrados`,            
+            icon: 'error',
+            position: 'center',
+            confirmButtonText: 'Ok!'
+        })
+    }
     //Mostramos los prestamos en diferentes monedas
+    else{    
+        
     Swal.fire({
         title: `${usuario}`,
         html: `Los préstamos solicitados en pesos son <br> ${resultadoPesos}<br>Los préstamos solicitados en dólares son <br> ${resultadoDolares}`,
@@ -142,8 +125,12 @@ function mostrarListadoPrestamos() {
         position: 'center',
         confirmButtonText: 'Ok!'
     })
-    //alert(resultadoPesos + " " + resultadoDolares)
-    //cargarPrestamos()
+
+    }
+    //CotizacionDiaria
+    obtengoCotizacion('USD','UYU')
+    .then(rates => console.log(rates))
+    .catch(error => console.error(error));
 }
 
 
@@ -188,12 +175,6 @@ function prestamoAutomotor() {
 
     });
     totalAPagar = resultado
-    //alert("El total a pagar es: " + resultado + " " + moneda)
-
-    //Volvemos a llamar a la funcion para consulta de prestamos    
-
-    //cargarPrestamos()
-
 }
 
 function prestamoInmobiliario() {
@@ -208,8 +189,8 @@ function prestamoInmobiliario() {
 
         console.log(prestamo.moneda)
         //Calculo del interes capital ingresado + tasa de interes * cantidad de cuotas ingresadas + el capital 
-        //Dolares = 0.10 anual
-        //Pesos = 0.20 anual
+        //Dolares = 0.30 anual
+        //Pesos = 0.50 anual
 
         if (prestamo.moneda === "Dolares") {
             resultado = intCapital * (0.30 * intcantCuotas / 12) + intCapital
@@ -224,18 +205,10 @@ function prestamoInmobiliario() {
         }
 
         moneda = prestamo.moneda
-        //console.log("Los prestamos solicitados son : " + prestamo.tipo)
-        //alert("Los prestamos solicitados son : " + prestamo.tipo + " " + prestamo.moneda + " " + prestamo.monto + " " + prestamo.cantCuotas)
+
     });
-
     totalAPagar = resultado
-
-    //alert("El total a pagar es: " + resultado + " " + moneda)
-    //Volvemos a llamar a la funcion para consulta de prestamos        
-    //cargarPrestamos()
 }
-
-
 
 //Calcular Prestamo
 const btn = document.querySelector('#calcular-btn')
@@ -277,35 +250,17 @@ btnListado.addEventListener('click', () => {
     mostrarListadoPrestamos();
 });
 
-
-
-
-
-
-
-
-
-/*
-const btnUsuario = document.querySelector('#user-btn')
-
-const pedirUsuario = () => {
-    usuario = prompt('Ingrese el nombre de usuario')
-    localStorage.setItem('usuario', usuario)
-}
-
-if (!usuario){
-    pedirUsuario()
-}
-
-titleUsuario.innerText = `Bienvenido ${usuario}`
-
-btnUsuario.addEventListener('click', () => {
-    pedirUsuario()
-    titleUsuario.innerText = `Bienvenido $(usuario)`
-})
-*/
-
-//Inicio del programa
-
-// Bienvenida();
-// cargarPrestamos();
+//Cotizacion 
+  function obtengoCotizacion(baseCurrency, targetCurrency) {
+    const apiKey = '7230c4d0000a4a2a9b6a6fd8a6b9c26f';
+    const url = `https://openexchangerates.org/api/latest.json?app_id=${apiKey}&base=${baseCurrency}&symbols=${targetCurrency}`;
+  
+    return fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const rate = data.rates[targetCurrency];
+        return rate;
+      })
+      .catch(error => console.error(error));
+  }
+  
