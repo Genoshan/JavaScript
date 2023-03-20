@@ -11,8 +11,22 @@ let arrayprestamos = []
 let prestamosCargados = []
 let totalAPagar = 0
 let usuario = localStorage.getItem('usuario')
+let montoenpesos = 0
 
 //Funciones
+
+    //CotizacionDiaria
+    //Invocamos una funcion que obtiene la cotizacion diaria de una api gratuita llamada 
+    //openexchangerates.org
+    //Realiza la equivalencia de dolares a Pesos uruguayos en nuestro caso.
+
+    obtengoCotizacion('USD','UYU')
+    .then(tasa => {
+        const nuevatasa = tasa;              
+        montoenpesos = nuevatasa; 
+    })
+    .catch(error => console.error(error));
+
 
 function Bienvenida() {
     let nombre = prompt("Ingrese su nombre")
@@ -21,17 +35,12 @@ function Bienvenida() {
 
 
 function HTMLcargarPrestamos() {
-    //Obtengo valores ingresados por el usuario
+    //Obtengo valores ingresados por el usuario desde el formulario web
     let nombreusUario = document.getElementById('formusuario').value
     let tipo = document.getElementById('formTipos').value
     let moneda = document.getElementById('formMonedas').value
     let monto = document.getElementById('formMonto').value
     let cantCuotas = document.getElementById('formCuotas').value
-
-    //const nuevoPrestamo = new Prestamos(tipo, moneda, monto, cantCuotas)    
-
-    let montoendolares=0
-
     
 
     if (tipo === "0") {
@@ -41,8 +50,6 @@ function HTMLcargarPrestamos() {
         tipo = "Inmobiliario"
     }
 
-    console.log(tipo)
-
     if (tipo === "Automotor" || tipo === "Inmobiliario") {
 
         if (moneda === "0") {
@@ -51,33 +58,11 @@ function HTMLcargarPrestamos() {
         else if (moneda === "1") {
             moneda = "Dolares"
         }
-
-        console.log(moneda)
-        if (moneda === "Dolares") {
-            //si la moneda es en dolares , traemos la cotizacion diaria
-            console.log("Elegi :" + document.getElementById('formMonedas').value) 
-            
-            
-            //CotizacionDiaria
-            obtengoCotizacion('USD','UYU')
-            .then(tasa => {
-              const nuevatasa = tasa;              
-              montoendolares = nuevatasa; 
-              console.log("Adentro del then vale: "+ montoendolares)
-              console.log("Total a pagar en Pesos :" + monto * montoendolares);
-              const nuevoPrestamo = new Prestamos(tipo, moneda, montoendolares, cantCuotas)
-            })
-            .catch(error => console.error(error));
-            
-
-        }
-        else {
-            console.log("Elegi la otra moneda")            
-        }
+        //Creamos el objeto prestamo con los datos cargados por el usuario
+        const nuevoPrestamo = new Prestamos(tipo, moneda, monto, cantCuotas)
         
-        arrayprestamos.push(nuevoPrestamo)
-        console.log(nuevoPrestamo)
-        console.log(arrayprestamos)
+        //Añadimos el prestamo a un array de prestamos para luego mostrarlos en el listado
+        arrayprestamos.push(nuevoPrestamo)        
 
         if (nuevoPrestamo.tipo === "Automotor") {
             prestamoAutomotor()
@@ -100,11 +85,11 @@ function mostrarListadoPrestamos() {
     let prestamoDolares = arrayprestamos.slice().filter(prestamo => prestamo.moneda === 'Dolares');
 
     prestamoPesos.forEach(prestamo => {
-        resultadoPesos += "Tipo: " + prestamo.tipo + " - " + " " + "Monto: " + prestamo.monto + " - " + " " + "Cantidad de Cuotas: " + prestamo.cantCuotas
+        resultadoPesos += "Tipo: " + prestamo.tipo + " - "  + "Monto: " + prestamo.monto + " - " + "Cantidad de Cuotas: " + "\n" + prestamo.cantCuotas + " "
     });
 
     prestamoDolares.forEach(prestamo => {
-        resultadoDolares += "Tipo: " + prestamo.tipo + " - " + " " + "Monto: " + prestamo.monto + " - " + " " + "Cantidad de Cuotas: " + prestamo.cantCuotas
+        resultadoDolares += "Tipo: " + prestamo.tipo + " - " + " " + "Monto: " + prestamo.monto + " - " + " " + "Cantidad de Cuotas: " + prestamo.cantCuotas + " "
     });
 
     if (usuario==undefined) {
@@ -120,40 +105,17 @@ function mostrarListadoPrestamos() {
         
     Swal.fire({
         title: `${usuario}`,
-        html: `Los préstamos solicitados en pesos son <br> ${resultadoPesos}<br>Los préstamos solicitados en dólares son <br> ${resultadoDolares}`,
+        html: `<hr> Los préstamos solicitados en pesos son <hr> <br>${resultadoPesos} <br> <hr> Los préstamos solicitados en dólares son <br> <hr> ${resultadoDolares}`,
         icon: 'success',
         position: 'center',
         confirmButtonText: 'Ok!'
     })
 
     }
-    //CotizacionDiaria
-    obtengoCotizacion('USD','UYU')
-    .then(rates => console.log(rates))
-    .catch(error => console.error(error));
+
 }
-
-
-function prestamos() {
-    let opcion = prompt("Ingrese una opcion: \n 1: Simular Prestamo Automotor \n 2: Simular Prestamo Inmobiliario \n 3: Informe de Prestamos \n 4: Finalizar");
-
-    while (opcion != 3) {
-        if (opcion === "1") {
-            prestamoAutomotor()
-        }
-        if (opcion === "2") {
-            prestamoInmobiliario()
-        }
-        alert("Gracias por su Visita!");
-        opcion = "4";
-        break;
-    }
-}
-
-
 function prestamoAutomotor() {
-    let resultado;
-    let moneda;
+    let resultado;    
 
     //Recorro el array de prestamos
     arrayprestamos.forEach(prestamo => {
@@ -178,16 +140,13 @@ function prestamoAutomotor() {
 }
 
 function prestamoInmobiliario() {
-    let resultado;
-    let moneda;
+    let resultado;    
 
     //Recorro el array de prestamos
-    arrayprestamos.forEach(prestamo => {
-        console.log(prestamo);
+    arrayprestamos.forEach(prestamo => {        
         let intCapital = parseInt(prestamo.monto)
         let intcantCuotas = parseInt(prestamo.cantCuotas)
 
-        console.log(prestamo.moneda)
         //Calculo del interes capital ingresado + tasa de interes * cantidad de cuotas ingresadas + el capital 
         //Dolares = 0.30 anual
         //Pesos = 0.50 anual
@@ -232,16 +191,28 @@ btn.addEventListener('click', () => {
     }
     else {
         HTMLcargarPrestamos();
-        Swal.fire({
-            title: `${usuario}`,
-            text: `El total a pagar es ${totalAPagar}`,
-            icon: 'success',
-            position: 'center',
-            confirmButtonText: 'Ok!'
-        })
-        
-    }
-    
+
+        arrayprestamos.forEach(prestamo => {            
+            if (prestamo.moneda === "Dolares") {
+                Swal.fire({
+                    title: `${usuario}`,
+                    text: `El total a pagar es ${totalAPagar} + "\n" + "En Pesos es: " + ${totalAPagar* parseInt(montoenpesos)} `,
+                    icon: 'success',
+                    position: 'center',
+                    confirmButtonText: 'Ok!'
+                })  
+            }
+            else if (prestamo.moneda === "Pesos") {
+                Swal.fire({
+                    title: `${usuario}`,
+                    text: `El total a pagar es ${totalAPagar}`,
+                    icon: 'success',
+                    position: 'center',
+                    confirmButtonText: 'Ok!'
+                })  
+            }
+        });      
+    }    
 });
 
 //Listar Prestamos
@@ -250,7 +221,9 @@ btnListado.addEventListener('click', () => {
     mostrarListadoPrestamos();
 });
 
-//Cotizacion 
+//Cotizacion - Funcion asincronica que genera la conversion de determinada moneda con la cotizacion diaria utilizando una api gratuita con 
+//su api key correspondiente
+
   function obtengoCotizacion(baseCurrency, targetCurrency) {
     const apiKey = '7230c4d0000a4a2a9b6a6fd8a6b9c26f';
     const url = `https://openexchangerates.org/api/latest.json?app_id=${apiKey}&base=${baseCurrency}&symbols=${targetCurrency}`;
